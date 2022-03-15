@@ -4,6 +4,9 @@ on:
   push:
     branches: 
       - main
+    tags:
+      - 'v*'
+  
   pull_request:
     branches:
       - main
@@ -27,6 +30,7 @@ jobs:
     
     - name: Build the Docker image
       run: |
+        echo "VERSION=$(echo ${GITHUB_REF:10})"
         docker build . --file Dockerfile --tag das-s3-fanout-processor
         docker tag das-s3-fanout-processor public.ecr.aws/pixelvide/das/s3-fanout-processor/debug:${GITHUB_SHA}
         docker push public.ecr.aws/pixelvide/das/s3-fanout-processor/debug:${GITHUB_SHA}

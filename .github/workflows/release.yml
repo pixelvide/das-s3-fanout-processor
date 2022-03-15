@@ -28,5 +28,5 @@ jobs:
     - name: Build the Docker image
       run: |
         docker build . --file Dockerfile --tag das-s3-fanout-processor
-        docker tag das-s3-fanout-processor public.ecr.aws/pixelvide/oss/s3-das-processor/debug:${GITHUB_SHA}
-        docker push public.ecr.aws/pixelvide/oss/s3-das-processor/debug:${GITHUB_SHA}
+        docker tag das-s3-fanout-processor public.ecr.aws/pixelvide/das/s3-fanout-processor/debug:${GITHUB_SHA}
+        docker push public.ecr.aws/pixelvide/das/s3-fanout-processor/debug:${GITHUB_SHA}

@@ -11,6 +11,8 @@ from aws_encryption_sdk.internal.crypto import WrappingKey
 from aws_encryption_sdk.key_providers.raw import RawMasterKeyProvider
 from aws_encryption_sdk.identifiers import WrappingAlgorithm, EncryptionKeyType
 import datetime
+import pyarrow.json as pa_json
+import pyarrow.parquet as pa_parquet
 
 enc_client = aws_encryption_sdk.EncryptionSDKClient(commitment_policy=CommitmentPolicy.REQUIRE_ENCRYPT_ALLOW_DECRYPT)
 kms = boto3.client('kms', region_name=os.environ['DAS_KMS_REGION_NAME'])
@@ -101,9 +103,17 @@ def handler(event, context):
             file_path[0] = "das"
             file_path[1] = os.environ['DAS_FILTER_NAME']
 
+            tmp_path = "/tmp/" + file_path[-1]
+            f = open(tmp_path, "w")
+            f.write("\n".join(das_processed_records))
+            f.close()
+
+            table = pa_json.read_json(tmp_path)
+            pa_parquet.write_table(table, tmp_path.replace('.json', '.parquet'))
+
             s3.put_object(
                 Bucket=s3_record["s3"]["bucket"]["name"],
-                Key="/".join(file_path),
+                Key="/".join(file_path).replace('.json', '.parquet'),
                 Body="\n".join(das_processed_records)
             )
     return event
@@ -140,7 +150,6 @@ def process_das_record(record, filters):
                         db_event.pop(d, None)
 
                     ret_obj.append(json.dumps(db_event))
-
         except Exception as e:
             print(db_event)
             print(e)

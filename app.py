@@ -111,7 +111,7 @@ def handler(event, context):
 
             table = pa_json.read_json(tmp_path)
             writer = pa.BufferOutputStream()
-            pa_parquet.write_table(table, writer)
+            pa_parquet.write_table(table, writer, compression='snappy')
 
             s3.put_object(
                 Bucket=s3_record["s3"]["bucket"]["name"],

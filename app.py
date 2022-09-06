@@ -141,6 +141,10 @@ def handler(event, context):
                 Key="/".join(file_path),
                 Body=bytes(writer.getvalue())
             )
+
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+
     return event
 
 

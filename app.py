@@ -104,7 +104,9 @@ def handler(event, context):
             file_path[0] = "das"
             file_path[1] = os.environ['DAS_FILTER_NAME']
 
-            tmp_path = file_path[-1]
+            print(file_path)
+
+            tmp_path = "/tmp/" + file_path[-1]
             f = open(tmp_path, "w")
             f.write("\n".join(das_processed_records))
             f.close()

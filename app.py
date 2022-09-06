@@ -109,7 +109,30 @@ def handler(event, context):
             f.write("\n".join(das_processed_records))
             f.close()
 
-            table = pa_json.read_json(tmp_path)
+            pa_table_schema = pa.schema([
+                ('logTime', pa.string()),
+                ('statementId', pa.int64()),
+                ('substatementId', pa.int64()),
+                ('objectType', pa.string()),
+                ('command', pa.string()),
+                ('objectName', pa.string()),
+                ('databaseName', pa.string()),
+                ('dbUserName', pa.string()),
+                ('remoteHost', pa.string()),
+                ('sessionId', pa.string()),
+                ('rowCount', pa.int64()),
+                ('commandText', pa.string()),
+                ('paramList', pa._list(pa.string())),
+                ('pid', pa.int64()),
+                ('clientApplication', pa.string()),
+                ('exitCode', pa.string()),
+                ('class', pa.string()),
+                ('serverHost', pa.string()),
+                ('type', pa.string()),
+                ('startTime', pa.string()),
+                ('errorMessage', pa.string()),
+            ])
+            table = pa_json.read_json(tmp_path, parse_options=pa_json.ParseOptions(explicit_schema=pa_table_schema))
             writer = pa.BufferOutputStream()
             pa_parquet.write_table(table, writer, compression='snappy')
 

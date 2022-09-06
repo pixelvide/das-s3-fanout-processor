@@ -174,6 +174,8 @@ def process_das_record(record, filters):
                 if db_event['type'] == "heartbeat":
                     continue
 
+                db_event['exitCode'] = str(db_event['exitCode'])
+
                 if filter_das_record(db_event, filters.get('query', {})):
                     for d in filters.get('drop', []):
                         db_event.pop(d, None)

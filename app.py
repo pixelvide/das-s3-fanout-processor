@@ -11,6 +11,7 @@ from aws_encryption_sdk.internal.crypto import WrappingKey
 from aws_encryption_sdk.key_providers.raw import RawMasterKeyProvider
 from aws_encryption_sdk.identifiers import WrappingAlgorithm, EncryptionKeyType
 import datetime
+import pyarrow as pa
 import pyarrow.json as pa_json
 import pyarrow.parquet as pa_parquet
 
@@ -109,12 +110,13 @@ def handler(event, context):
             f.close()
 
             table = pa_json.read_json(tmp_path)
-            pa_parquet.write_table(table, tmp_path.replace('.json', '.parquet'))
+            writer = pa.BufferOutputStream()
+            pa_parquet.write_table(table, writer)
 
             s3.put_object(
                 Bucket=s3_record["s3"]["bucket"]["name"],
-                Key="/".join(file_path).replace('.json', '.parquet'),
-                Body="\n".join(das_processed_records)
+                Key="/".join(file_path),
+                Body=bytes(writer.getvalue())
             )
     return event
 

@@ -122,7 +122,7 @@ def handler(event, context):
                 pa.field('sessionId', pa.string()),
                 pa.field('rowCount', pa.int64()),
                 pa.field('commandText', pa.string()),
-                pa.field('paramList', pa._list(pa.string())),
+                pa.field('paramList', pa.list_(pa.string())),
                 pa.field('pid', pa.int64()),
                 pa.field('clientApplication', pa.string()),
                 pa.field('exitCode', pa.string()),

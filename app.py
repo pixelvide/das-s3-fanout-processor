@@ -88,7 +88,9 @@ def handler(event, context):
             continue
 
         for s3_record in s3_event['Records']:
-            print("Received S3 record: " + json.dumps(s3_record, indent=2))
+            print("Received S3 record")
+            print("Bucket: " + s3_record["s3"]["bucket"]["name"])
+            print("Object: " + s3_record["s3"]["object"]["key"])
 
             response = s3.get_object(Bucket=s3_record["s3"]["bucket"]["name"], Key=s3_record["s3"]["object"]["key"])
 
